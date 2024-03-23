@@ -26,6 +26,9 @@ public class Intersection extends TrafficElement {
         return roadList;
     }
 
+    public void addLaneConnectingTo(Lane l){connectingTo.add(l);}
+    public void addLaneConnectingFrom(Lane l){connectingFrom.add(l);}
+
     public ArrayList<Lane> getConnectingTo(){return connectingTo;}
     public ArrayList<Lane> getConnectingFrom(){return connectingFrom;}
 
