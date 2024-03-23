@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!DOCTYPE city SYSTEM "city.xsd">
+<city>
+    <intersections>
+        <intersection id = "a">
+            <x>0</x>
+            <y>2</y>
+        </intersection>
+        <intersection id="b">
+            <x>2</x>
+            <y>2</y>
+        </intersection>
+        <intersection id="c">
+            <x>0</x>
+            <y>0</y>
+        </intersection>
+        <intersection id="d">
+            <x>2</x>
+            <y>0</y>
+        </intersection>
+        <intersection id="e">
+            <x>1</x>
+            <y>1</y>
+        </intersection>
+    </intersections>
+    <lanes>
+        <lane id = "ab0">
+            <x>1</x>
+            <y>2</y>
+        </lane>
+        <lane id="ab1">
+            <x>1</x>
+            <y>2</y>
+        </lane>
+        <lane id="ac0">
+            <x>0</x>
+            <y>1</y>
+        </lane>
+        <lane id="ca0">
+            <x>0</x>
+            <y>1</y>
+        </lane>
+        <lane id="ae0">
+            <x>0.5</x>
+            <y>1.5</y>
+        </lane>
+        <lane id="ea0">
+            <x>0.5</x>
+            <y>1.5</y>
+        </lane>
+        <lane id="bd0">
+            <x>2</x>
+            <y>1</y>
+        </lane>
+        <lane id="db0">
+            <x>2</x>
+            <y>1</y>
+        </lane>
+        <lane id="be0">
+            <x>1.5</x>
+            <y>1.5</y>
+        </lane>
+        <lane id="be1">
+            <x>1.5</x>
+            <y>1.5</y>
+        </lane>
+        <lane id="eb0">
+            <x>1.5</x>
+            <y>1.5</y>
+        </lane>
+        <lane id="cd0">
+            <x>0</x>
+            <y>1</y>
+        </lane>
+        <lane id="dc0">
+            <x>0</x>
+            <y>1</y>
+        </lane>
+        <lane id="de0">
+            <x>1.5</x>
+            <y>0.5</y>
+        </lane>
+        <lane id="ed0">
+            <x>1.5</x>
+            <y>0.5</y>
+        </lane>
+    </lanes>
+</city>
