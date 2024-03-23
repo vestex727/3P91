@@ -1,0 +1,178 @@
+package Map;
+
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NameList;
+import org.xml.sax.SAXException;
+
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class cityParsing {
+    private static final String FILENAME = "src/city.xml";
+    private ArrayList<Lane> lanes;
+    private ArrayList<Intersection> crosses;
+    private ArrayList<RoadSegment> roads;
+
+    /**Parses and creates city from XML file
+     *
+     */
+    cityParsing(){
+        parseCity();
+        connectLanes();
+        roads = createRoads();
+        connectIntersections();
+    }
+
+    /**
+     *
+     * @return
+     */
+    ArrayList<Intersection> connectIntersections(){
+        for(int i = 0; i < crosses.size(); i++) connects(crosses.get(i));
+        return crosses;
+    }
+
+    /**Assign all lanes to an array of roads
+     *
+     * @return  Arraylist of roads     */
+    ArrayList<RoadSegment> createRoads(){
+        ArrayList<RoadSegment> rs = new ArrayList<>();
+        ArrayList<String> edgeList = new ArrayList<>();
+
+        //Finds the total number of roads
+        for(int i = 0; i < lanes.size(); i++){
+            String temp = getVertecies(lanes.get(i));
+            String revTemp = new StringBuilder(temp).reverse().toString();
+            if(!edgeList.contains(temp) && !edgeList.contains(revTemp)){
+                edgeList.add(temp);
+            }
+        }
+
+        //For each rode, adds all lanes that belong to it
+        for(int i = 0; i < edgeList.size(); i++){
+            RoadSegment r = new RoadSegment(new ArrayList<Lane>());
+
+            //Finds and adds all lanes that belong to the current road
+            for(int j = 0; j < lanes.size(); j++){
+
+                String temp = getVertecies(lanes.get(j));
+                String revTemp = new StringBuilder(temp).reverse().toString();
+
+                if(temp == edgeList.get(i) || revTemp == edgeList.get(i)){
+                    r.addLane(lanes.get(j));
+                }
+            }
+            rs.add(r);
+        }
+
+        return rs;
+    }
+
+    /**Edges are named v1v2n
+     * where v1 is the vertex it is coming from
+     * v2 is the vertex it is going towards
+     * and n is the number assigned to a lane with those values (0 indexed)
+     *
+     * @param l Lane to get vertecies of
+     * @return  a two character long string with the vertex its coming from at the 0 index, and the vertex going to at 1     */
+    String getVertecies(Lane l){return Character.toString(l.getName().charAt(0)) + l.getName().charAt(1);}
+
+    /**Connects all lanes
+     *
+     * @return  updated lanes
+     */
+    ArrayList<Lane> connectLanes(){
+        for(int i = 0; i < lanes.size(); i++){
+            connects(lanes.get(i));
+        }
+        return lanes;
+    }
+
+    /**Finds and adds all lanes connecting to and from given intersection
+     *
+     * @param i intersection to add all appropriate lanes to
+     * @return  updated i     */
+    Intersection connects(Intersection i){
+        char c = i.getName().charAt(0);
+        for(int n = 0; n < lanes.size(); n++){
+            String temp = lanes.get(n).getName();
+            /**CHECK THESE LINES*/
+            if(c == temp.charAt(0)) i.addLaneConnectingTo(lanes.get(n));
+            if(c == temp.charAt(1)) i.addLaneConnectingFrom(lanes.get(n));
+        }
+        return i;
+    }
+
+    /** Connects given lane to all intersections it should connect to and from
+     *
+     * @param l lane to connect
+     * @return  connected lane
+     */
+    Lane connects(Lane l){return l = connects(connects(l, true), false);}
+
+    /**Connects given lane to all intersections it should connect to and from
+     *
+     * @param l lane to connect
+     * @param to Whether we are adding intersections it connectes to or from (connects to if true)
+     * @return  updated lane
+     */
+    Lane connects(Lane l, Boolean to){
+        if(to) return connectsTo(l);
+        return connectsFrom(l);
+    }
+
+    Lane connectsTo(Lane l){
+        for(int i = 0; i < crosses.size(); i++){
+            if(crosses.get(i).getName().charAt(0) == l.getName().charAt(1)){
+                l.setConnectingTo(crosses.get(i));
+                break;
+            }
+        }
+        return l;
+    }
+
+    Lane connectsFrom(Lane l){
+        for(int i = 0; i < crosses.size(); i++){
+            if(crosses.get(i).getName().charAt(0) == l.getName().charAt(0)){
+                l.setConnectingTo(crosses.get(i));
+                break;
+            }
+        }
+        return l;
+    }
+
+    void parseCity(){
+        DocumentBuilderFactory city = DocumentBuilderFactory.newInstance();
+
+        try{
+            //Enables safety features for the xml parsing
+
+            DocumentBuilder bob = city.newDocumentBuilder();
+
+            Document doc = bob.parse(new File(FILENAME));
+            doc.getDocumentElement().normalize();
+
+            System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
+            System.out.println("-------");
+
+            lanes = doc.getElementsByTagName("lane");
+            crosses = doc.getElementsByTagName("Intersection");
+
+        }catch (ParserConfigurationException | SAXException | IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void main(String... args){cityParsing c = new cityParsing();}
+}
+
