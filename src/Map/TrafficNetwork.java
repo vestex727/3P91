@@ -6,8 +6,8 @@ import Vehicles.Vehicle;
 import java.util.ArrayList;
 
 public class TrafficNetwork {
-    public static ArrayList<RoadSegment> roads;
-    public static ArrayList<Intersection> intersections;
+    public ArrayList<RoadSegment> roads;
+    public ArrayList<Intersection> intersections;
 
     /**Finds and returns the number of vehicles in a road segment
      *

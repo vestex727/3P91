@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Random;
 import Map.TrafficElement;
+import java.util.Scanner;
 
 public class GameEngine implements MovementController{
     private TrafficNetwork trafficNetwork;
@@ -42,19 +43,80 @@ public class GameEngine implements MovementController{
         System.out.print(player.getVehicle().getMovementStatus().getPosition().getCoords().y);
         //gets array of all directions the player can go next turn
         ArrayList<TrafficElement> trafficElements = probeMapSurroundings(vehicle);
-        ArrayList<Direction> directions = new ArrayList<Direction>();
         if(player.getVehicle().getMovementStatus().getPosition().getTrafficElement().type == TrafficElementType.INTERSECTION){
+            ArrayList<Direction> directions = new ArrayList<Direction>();
             for(int i = 0; i < trafficElements.size(); i++){
                 Lane temp = (Lane) trafficElements.get(i);
                 directions.add(temp.getDirection());
             }
             System.out.print("Which direction would you like to turn?");
             for(int i = 0; i < directions.size(); i++){
-
+                System.out.println(directions.get(i).name());
+            }
+            Scanner prompt = new Scanner(System.in);
+            while(true){
+                String playerDirection = prompt.nextLine();
+                if(playerDirection.toUpperCase().equals(Direction.NORTH.name()) && directions.contains(Direction.NORTH)){
+                    vehicle.setDirection(Direction.NORTH);
+                    break;
+                }
+                if(playerDirection.toUpperCase().equals(Direction.NORTHEAST.name()) && directions.contains(Direction.NORTHEAST)){
+                    vehicle.setDirection(Direction.NORTHEAST);
+                    break;
+                }
+                if(playerDirection.toUpperCase().equals(Direction.EAST.name()) && directions.contains(Direction.EAST)){
+                    vehicle.setDirection(Direction.EAST);
+                    break;
+                }
+                if(playerDirection.toUpperCase().equals(Direction.SOUTHEAST.name()) && directions.contains(Direction.SOUTHEAST)){
+                    vehicle.setDirection(Direction.SOUTHEAST);
+                    break;
+                }
+                if(playerDirection.toUpperCase().equals(Direction.SOUTH.name()) && directions.contains(Direction.SOUTH)){
+                    vehicle.setDirection(Direction.SOUTH);
+                    break;
+                }
+                if(playerDirection.toUpperCase().equals(Direction.SOUTHWEST.name()) && directions.contains(Direction.SOUTHWEST)){
+                    vehicle.setDirection(Direction.SOUTHWEST);
+                    break;
+                }
+                if(playerDirection.toUpperCase().equals(Direction.WEST.name()) && directions.contains(Direction.WEST)){
+                    vehicle.setDirection(Direction.WEST);
+                    break;
+                }
+                if(playerDirection.toUpperCase().equals(Direction.NORTHWEST.name()) && directions.contains(Direction.NORTHWEST)){
+                    vehicle.setDirection(Direction.NORTHWEST);
+                    break;
+                }
             }
         }
         if(player.getVehicle().getMovementStatus().getPosition().getTrafficElement().type == TrafficElementType.LANE){
-
+            ArrayList<String> laneIDs = new ArrayList<String>();
+            for(int i = 0; i < trafficElements.size(); i++){
+                Lane temp = (Lane) trafficElements.get(i);
+                laneIDs.add(temp.getId());
+            }
+            if(trafficElements.size() > 1){ //if there are any adjacent lanes
+                Scanner prompt = new Scanner(System.in);
+                System.out.print("Would you like to merge lanes? Y/N");
+                String response = prompt.nextLine().toUpperCase();
+                if(response.equals("Y")){
+                    System.out.print("The Lanes you can merge to are: ");
+                    for(int i = 0; i < laneIDs.size(); i++){
+                        System.out.println("ID: " + laneIDs.get(i));
+                    }
+                    while(true){
+                        String nextLane = prompt.nextLine();
+                        for(int i = 0; i < laneIDs.size(); i++){
+                            if(nextLane.equals(laneIDs.get(i))){
+                                Coordinates c = trafficElements.get(i).getCoords();
+                                vehicle.getMovementStatus().getPosition().setCoords(c);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

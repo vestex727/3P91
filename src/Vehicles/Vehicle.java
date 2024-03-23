@@ -1,5 +1,6 @@
 package Vehicles;
 
+import Map.Direction;
 import Map.TrafficElement;
 
 import java.util.ArrayList;
@@ -34,4 +35,8 @@ public abstract class Vehicle {
     }
 
     public Stack<TrafficElement> getHistory(){return history;}
+
+    public void setDirection(Direction direction){this.movementStatus.setDirection(direction);}
+
+    public Reputation getReputation(){ return reputation; }
 }
