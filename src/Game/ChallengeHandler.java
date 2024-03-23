@@ -58,7 +58,7 @@ public class ChallengeHandler {
 
     private ArrayList<Vehicle> findNeighbours(Vehicle vehicle){
         ArrayList<Vehicle> allVehicles = Game.GameEngine.getVehicles();
-        ArrayList<Vehicle> v = new ArrayList<Vehicle>();
+        ArrayList<Vehicle> v = new ArrayList<>();
         Coordinates c = vehicle.getMovementStatus().getPosition().coords;
         //returns all other vehicles on the same element
         for(int i = 0; i < allVehicles.size(); i++){

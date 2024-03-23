@@ -39,4 +39,6 @@ public abstract class Vehicle {
     public void setDirection(Direction direction){this.movementStatus.setDirection(direction);}
 
     public Reputation getReputation(){ return reputation; }
+
+    public void setType(VehicleName vn, float length){this.type.setName(vn); this.type.setLength(length);}
 }

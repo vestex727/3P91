@@ -1,8 +1,7 @@
 package Game;
 
 import Map.*;
-import Vehicles.Player;
-import Vehicles.Vehicle;
+import Vehicles.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ public class GameEngine implements MovementController{
     private MovementController movementController;
     private ChallengeHandler challengeHandler;
     private int turnCount;
+    private GameView view;
 
     public ArrayList<Vehicle> addVehicle(Vehicle vehicle){
         vehicles.add(vehicle);
@@ -26,6 +26,25 @@ public class GameEngine implements MovementController{
 
     public static ArrayList<Vehicle> getVehicles(){return vehicles;}
 
+    private void initGameState(){
+        view.printGameMessage("What vehicle type do you want? Car, Bus, or Truck?");
+        Scanner prompt = new Scanner(System.in);
+        String vehicleType = prompt.nextLine();
+        if(vehicleType.toUpperCase().equals("BUS")){
+            Vehicle player = new Bus();
+            player.setType(VehicleName.BUS, 5);
+        } else if (vehicleType.toUpperCase().equals("TRUCK")){
+            Vehicle player = new Truck();
+            player.setType(VehicleName.TRUCK, 4);
+        } else { //defaults to car if unclear input given
+            Vehicle player = new Car();
+            player.setType(VehicleName.CAR, 3);
+        }
+
+
+        //map is created
+
+    }
 
     private void updateSimulationTurn(){
 
@@ -33,14 +52,14 @@ public class GameEngine implements MovementController{
 
     private void promptPlayer(Vehicle vehicle){
         if(player.getVehicle().getMovementStatus().getPosition().getTrafficElement().type == TrafficElementType.LANE){
-            System.out.print("You are currently at Lane ");
+            view.printGameMessage("You are currently at Lane ");
         }
         if(player.getVehicle().getMovementStatus().getPosition().getTrafficElement().type == TrafficElementType.INTERSECTION){
-            System.out.print("You are currently at Intersection ");
+            view.printGameMessage("You are currently at Intersection ");
         }
-        System.out.print(player.getVehicle().getMovementStatus().getPosition().getCoords().x);
-        System.out.print(", ");
-        System.out.print(player.getVehicle().getMovementStatus().getPosition().getCoords().y);
+        view.printGameMessage(Integer.toString(player.getVehicle().getMovementStatus().getPosition().getCoords().x));
+        view.printGameMessage(", ");
+        view.printGameMessage(Integer.toString(player.getVehicle().getMovementStatus().getPosition().getCoords().y));
         //gets array of all directions the player can go next turn
         ArrayList<TrafficElement> trafficElements = probeMapSurroundings(vehicle);
         if(player.getVehicle().getMovementStatus().getPosition().getTrafficElement().type == TrafficElementType.INTERSECTION){
@@ -49,7 +68,7 @@ public class GameEngine implements MovementController{
                 Lane temp = (Lane) trafficElements.get(i);
                 directions.add(temp.getDirection());
             }
-            System.out.print("Which direction would you like to turn?");
+            view.printGameMessage("Which direction would you like to turn?");
             for(int i = 0; i < directions.size(); i++){
                 System.out.println(directions.get(i).name());
             }
@@ -98,12 +117,12 @@ public class GameEngine implements MovementController{
             }
             if(trafficElements.size() > 1){ //if there are any adjacent lanes
                 Scanner prompt = new Scanner(System.in);
-                System.out.print("Would you like to merge lanes? Y/N");
+                view.printGameMessage("Would you like to merge lanes? Y/N");
                 String response = prompt.nextLine().toUpperCase();
                 if(response.equals("Y")){
-                    System.out.print("The Lanes you can merge to are: ");
+                    view.printGameMessage("The Lanes you can merge to are: ");
                     for(int i = 0; i < laneIDs.size(); i++){
-                        System.out.println("ID: " + laneIDs.get(i));
+                        view.printGameMessage("ID: " + laneIDs.get(i));
                     }
                     while(true){
                         String nextLane = prompt.nextLine();
