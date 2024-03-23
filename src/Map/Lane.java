@@ -2,7 +2,9 @@ package Map;
 
 import java.util.ArrayList;
 
+import static Map.Direction.*;
 import static Map.TrafficElementType.LANE;
+
 
 /**Lane extends the TrafficElement abstract class and gets a coordinate and queue of all vehicles on it as a result.
  * The lane also has a direction, and a length
@@ -35,7 +37,42 @@ public class Lane extends TrafficElement{
          * @return
          */
         public Direction getDirection(){return direction;}
-        public Direction setDirection(Direction direction){this.direction = direction; return this.direction;}
+
+        /**Sets the direction of the lane
+         *
+         * @return direction of lane
+         */
+        public Direction setDirection(){
+                if(connectingTo == null || connectingFrom == null) return null;
+                return direction = findDirection(connectingFrom.getCoords(), connectingTo.getCoords());
+        }
+
+        /**Finds the direction of an edge (lane)
+         *
+         * @param start Start coords of the lane
+         * @param end   End coords of the lane
+         * @return      Direction of the
+         */
+        private Direction findDirection(Coordinates start, Coordinates end){return valueOf(getNS(start.y, end.y) + getEW(start.x, end.x));}
+
+        private String getNS(double y1, double y2){
+                double temp = y2-y1;
+                if(temp > 0) return "NORTH";
+                if(temp < 0) return "SOUTH";
+                return "";
+        }
+
+        private String getEW(double x1, double x2){
+                double temp = x2-x1;
+                if(temp > 0) return "EAST";
+                if(temp < 0) return "WEST";
+                return "";
+        }
+
+        //public Direction setDirection(Direction d){return direction = d;}
+
         public TrafficElement getConnectingTo(){return connectingTo;}
+        public TrafficElement setConnectingTo(TrafficElement to){return connectingTo = to;}
+
         public TrafficElement getConnectingFrom(){return connectingFrom;}
 }
