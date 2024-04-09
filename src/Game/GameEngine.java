@@ -17,7 +17,7 @@ public class GameEngine implements MovementController{
     private MovementController movementController;
     private ChallengeHandler challengeHandler;
     private int turnCount;
-    private GameView view;
+    public static GameServer view;
 
     public ArrayList<Vehicle> addVehicle(Vehicle vehicle){
         vehicles.add(vehicle);
@@ -26,8 +26,8 @@ public class GameEngine implements MovementController{
 
     public static ArrayList<Vehicle> getVehicles(){return vehicles;}
 
-    private void initGameState(){
-        view.printGameMessage("What vehicle type do you want? Car, Bus, or Truck?");
+    private void initGameState() throws Exception {
+        view.players[0].sendMsg("What vehicle type do you want? Car, Bus, or Truck?");
         Scanner prompt = new Scanner(System.in);
         String vehicleType = prompt.nextLine();
         if(vehicleType.toUpperCase().equals("BUS")){
@@ -50,16 +50,16 @@ public class GameEngine implements MovementController{
 
     }
 
-    private void promptPlayer(Vehicle vehicle){
+    private void promptPlayer(Vehicle vehicle) throws Exception {
         if(player.getVehicle().getMovementStatus().getPosition().getTrafficElement().type == TrafficElementType.LANE){
-            view.printGameMessage("You are currently at Lane ");
+            view.players[0].sendMsg("You are currently at Lane ");
         }
         if(player.getVehicle().getMovementStatus().getPosition().getTrafficElement().type == TrafficElementType.INTERSECTION){
-            view.printGameMessage("You are currently at Intersection ");
+            view.players[0].sendMsg("You are currently at Intersection ");
         }
-        view.printGameMessage(Integer.toString(player.getVehicle().getMovementStatus().getPosition().getCoords().x));
-        view.printGameMessage(", ");
-        view.printGameMessage(Integer.toString(player.getVehicle().getMovementStatus().getPosition().getCoords().y));
+        view.players[0].sendMsg(Integer.toString(player.getVehicle().getMovementStatus().getPosition().getCoords().x));
+        view.players[0].sendMsg(", ");
+        view.players[0].sendMsg(Integer.toString(player.getVehicle().getMovementStatus().getPosition().getCoords().y));
         //gets array of all directions the player can go next turn
         ArrayList<TrafficElement> trafficElements = probeMapSurroundings(vehicle);
         if(player.getVehicle().getMovementStatus().getPosition().getTrafficElement().type == TrafficElementType.INTERSECTION){
@@ -68,13 +68,12 @@ public class GameEngine implements MovementController{
                 Lane temp = (Lane) trafficElements.get(i);
                 directions.add(temp.getDirection());
             }
-            view.printGameMessage("Which direction would you like to turn?");
+            view.players[0].sendMsg("Which direction would you like to turn?");
             for(int i = 0; i < directions.size(); i++){
                 System.out.println(directions.get(i).name());
             }
-            Scanner prompt = new Scanner(System.in);
-            while(true){
-                String playerDirection = prompt.nextLine();
+            while(true){    //Gets direction from the user
+                String playerDirection = view.players[0].receiveMsg();
                 if(playerDirection.toUpperCase().equals(Direction.NORTH.name()) && directions.contains(Direction.NORTH)){
                     vehicle.setDirection(Direction.NORTH);
                     break;
@@ -116,16 +115,16 @@ public class GameEngine implements MovementController{
                 laneIDs.add(temp.getId());
             }
             if(trafficElements.size() > 1){ //if there are any adjacent lanes
-                Scanner prompt = new Scanner(System.in);
-                view.printGameMessage("Would you like to merge lanes? Y/N");
-                String response = prompt.nextLine().toUpperCase();
+
+                view.players[0].sendMsg("Would you like to merge lanes? Y/N");
+                String response = view.players[0].receiveMsg().toUpperCase();
                 if(response.equals("Y")){
-                    view.printGameMessage("The Lanes you can merge to are: ");
+                    view.players[0].sendMsg("The Lanes you can merge to are: ");
                     for(int i = 0; i < laneIDs.size(); i++){
-                        view.printGameMessage("ID: " + laneIDs.get(i));
+                        view.players[0].sendMsg("ID: " + laneIDs.get(i));
                     }
                     while(true){
-                        String nextLane = prompt.nextLine();
+                        String nextLane = view.players[0].receiveMsg().toUpperCase();
                         for(int i = 0; i < laneIDs.size(); i++){
                             if(nextLane.equals(laneIDs.get(i))){
                                 Coordinates c = trafficElements.get(i).getCoords();
